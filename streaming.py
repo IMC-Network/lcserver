@@ -38,7 +38,7 @@ class Streamer:
 
         self.isRunning = True
 
-    def useConfiguration(self, newConfigurationPath):
+    def useConfiguration(self, newConfigurationPath = "configurations/streaming/nginx.conf"):
         self.log.runCommand(
             module = MODULE_NAME,
             application = "nginx",
@@ -46,3 +46,19 @@ class Streamer:
         )
 
         self.testConfiguration()
+
+    def useConfigurationTemplate(self, parameters, newConfigurationPath = "templates/nginx/rtmp-hls.conf", finalConfigurationPath = "configurations/streaming/nginx.conf"):
+        templateConfigurationFile = open(newConfigurationPath, "r")
+        finalConfigurationFile = open(finalConfigurationPath, "w")
+
+        newConfiguration = templateConfigurationFile.read()
+
+        for key, value in parameters.items():
+            newConfiguration = newConfiguration.replace("{{ " + key + " }}", value)
+        
+        finalConfigurationFile.write(newConfiguration)
+
+        templateConfigurationFile.close()
+        finalConfigurationFile.close()
+
+        self.useConfiguration(finalConfigurationPath)
