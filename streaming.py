@@ -42,12 +42,14 @@ class Streamer:
         self.log.runCommand(
             module = MODULE_NAME,
             application = "nginx",
-            command = "sudo cp {0} {1}".format(newConfigurationPath, NGINX_CONFIGURATION_PATH)
+            command = "cp {0} {1}".format(newConfigurationPath, NGINX_CONFIGURATION_PATH)
         )
 
         self.testConfiguration()
 
     def useConfigurationTemplate(self, parameters, newConfigurationPath = "templates/nginx/rtmp-hls.conf", finalConfigurationPath = "configurations/streaming/nginx.conf"):
+        # TODO: Make it automatically add directories
+        
         templateConfigurationFile = open(newConfigurationPath, "r")
         finalConfigurationFile = open(finalConfigurationPath, "w")
 
