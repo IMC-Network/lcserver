@@ -1,8 +1,7 @@
 import time
 import subprocess
 
-def printToTTY(entry):
-    print("[{}: {}] {}".format(entry.module, entry.application, entry.message))
+import iohandlers.default
 
 class Entry:
     def __init__(self, module, message, application, command, timestamp):
@@ -13,9 +12,10 @@ class Entry:
         self.timestamp = timestamp
 
 class Log:
-    def __init__(self, printHandler = printToTTY):
+    def __init__(self, printHandlers = [iohandlers.default.defaultHandler.handlePrint]):
+        self.printHandlers = printHandlers
+
         self.history = []
-        self.printHandler = printHandler
     
     def print(self, module, message, application = "<server>", command = "", timestamp = time.time()):
         entry = Entry(
@@ -27,7 +27,9 @@ class Log:
         )
 
         self.history.append(entry)
-        self.printHandler(entry)
+
+        for i in range(0, len(self.printHandlers)):
+            self.printHandlers[i](entry)
     
     def runCommand(self, module, application, command):
         try:
