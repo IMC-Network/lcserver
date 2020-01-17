@@ -31,13 +31,18 @@ class Streamer:
         self.isRunning = False
     
     def testConfiguration(self):
-        self.log.runCommand(
-            module = MODULE_NAME,
-            application = "nginx",
-            command = "{0} -t && {0} -s reload".format(NGINX_EXECUTABLE)
-        )
-
-        self.isRunning = True
+        if self.isRunning:
+            self.log.runCommand(
+                module = MODULE_NAME,
+                application = "nginx",
+                command = "{0} -t && {0} -s reload".format(NGINX_EXECUTABLE)
+            )
+        else:
+            self.log.runCommand(
+                module = MODULE_NAME,
+                application = "nginx",
+                command = "{0} -t".format(NGINX_EXECUTABLE)
+            )
 
     def useConfiguration(self, newConfigurationPath = "configurations/streaming/nginx.conf"):
         self.log.runCommand(
