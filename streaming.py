@@ -48,8 +48,11 @@ class Streamer:
 
         self.testConfiguration()
 
-    def useConfigurationTemplate(self, parameters, newConfigurationPath = "templates/nginx/rtmp-hls.conf", finalConfigurationPath = "configurations/streaming/nginx.conf"):
-        # TODO: Make it automatically add directories
+    def useConfigurationTemplate(self, parameters, newConfigurationPath = "templates/nginx/rtmp-hls.conf", finalConfigurationPath = "config/streaming/nginx.conf"):
+        finalConfigurationPathParent = "/".join(finalConfigurationPath.split("/")[:-1])
+        
+        if not os.path.exists(finalConfigurationPathParent):
+            os.makedirs(finalConfigurationPathParent)
         
         templateConfigurationFile = open(newConfigurationPath, "r")
         finalConfigurationFile = open(finalConfigurationPath, "w")
