@@ -1,9 +1,6 @@
 import iohandlers.default
 
 class Handler(iohandlers.default.Handler):
-    def __init__(self):
-        pass
-
     def handleInput(self, entry):
         entry.text = input("[{0}: {2}] {1}".format(entry.module, entry.prompt, entry.application))
 
