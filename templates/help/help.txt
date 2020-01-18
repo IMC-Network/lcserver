@@ -1,0 +1,21 @@
+IMC LiveCloud Server Help
+
+Gets help to do with this shell or a specific command.
+
+Usage: `help [command]`
+
+command     Command to get help with.
+
+-----
+
+These commands are defined internally and across modules, but scripts are not
+defined here.
+Type `help` followed by a command name to get more help on said command (for
+example, `help ping`).
+
+List of available internal commands:
+
+exit        Exits this shell.
+help        Gets help to do with this shell or a specific command.
+ping        Returns "Pong!".
+Pong        Returns "Ping!".

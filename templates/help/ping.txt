@@ -1,0 +1,10 @@
+IMC LiveCloud Server Pinger
+
+Returns "Ping!".
+
+Usage: `ping`
+
+-----
+
+`ping` is primarily used to see if the shell is responding, especially when
+using remote connections.
