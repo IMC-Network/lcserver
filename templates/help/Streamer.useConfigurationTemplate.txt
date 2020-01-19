@@ -1,0 +1,22 @@
+IMC LiveCloud Server Streamer Nginx Configuration Template Copier Command
+
+Copies the configuration for `nginx` to the `nginx` configuration path using a
+specified template.
+
+Usage: `$ useConfigurationTemplate <parameterSpecification
+{specifyParameters, useConfigurationTemplate}> [<newConfigurationPath>
+[<finalConfigurationPath>]]`
+
+<parameterSpecification>
+            Whether to specify template parameters in the shell (on-the-fly) or
+            to use the JSON file at `config/streaming/templateParameters.json`.
+<newConfigurationPath>
+            Location of configuration file to template with.
+<finalConfigurationPath>
+            Location of configuration file to be formatted by templating with
+            and copy from.
+
+-----
+
+This command runs the :`Streamer.useConfiguration`: command in order to copy the
+final configuration file to the `nginx` configuration path.

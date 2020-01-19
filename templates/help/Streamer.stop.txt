@@ -1,0 +1,5 @@
+IMC LiveCloud Server Streamer Stop Command
+
+Stops the streaming server if it is not already stopped.
+
+Usage: `$ stop`

@@ -1,4 +1,7 @@
+import sessions
+
 import os
+import json
 
 MODULE_NAME = "streaming"
 
@@ -73,3 +76,91 @@ class Streamer:
         finalConfigurationFile.close()
 
         self.useConfiguration(finalConfigurationPath)
+    
+    def runCommand(self, arguments, runningSession):
+        if arguments[0] == "start":
+            if not self.isRunning:
+                self.start()
+            else:
+                runningSession.handleError(MODULE_NAME, sessions.ReturnCode.ERROR, "stream is already running")
+
+                return sessions.ReturnCode.ERROR
+        elif arguments[0] == "stop":
+            if self.isRunning:
+                self.stop()
+            else:
+                runningSession.handleError(MODULE_NAME, sessions.ReturnCode.ERROR, "stream is already stopped")
+
+                return sessions.ReturnCode.ERROR
+        elif arguments[0] == "testConfiguration":
+            self.testConfiguration()
+        elif arguments[0] == "useConfiguration":
+            if len(arguments) > 1:
+                self.useConfiguration(arguments[1])
+            else:
+                self.useConfiguration()
+        elif arguments[0] == "useConfigurationTemplate":
+            if len(arguments) > 1:
+                configurationTemplateParameters = {}
+
+                if arguments[1] == "specifyParameters":
+                    runningSession.log.print(MODULE_NAME, "Specify keys and values in a dictionary by using the pattern:")
+                    runningSession.log.print(MODULE_NAME, "    key: value")
+                    runningSession.log.print(MODULE_NAME, "Type an empty line when done.")
+
+                    keyValuesDone = 0
+
+                    while True:
+                        keyValueString = runningSession.input.input(MODULE_NAME, "parameters[{0}]: ".format(keyValuesDone)).text
+
+                        if keyValueString.find(":") >= 0:
+                            configurationTemplateParameters[keyValueString.split(":")[0]] = ":".join(keyValueString.split(":")[1:]).strip()
+
+                            keyValuesDone += 1
+                        elif keyValueString == "":
+                            break
+                        else:
+                            runningSession.handleError(MODULE_NAME, sessions.ReturnCode.SYNTAX_ERROR, "syntax error")
+                    
+                    runningSession.log.print(MODULE_NAME, "Key-value dictionary storage set.")
+                elif arguments[1] == "getParamtersFromConfig":
+                    runningSession.log.print(MODULE_NAME, "Getting parameters from config file: config/streaming/templateParameters.json")
+
+                    try:
+                        configFile = open("config/streaming/templateParameters.json", "r")
+
+                        try:
+                            configurationTemplateParameters = json.loads(configFile.read())
+                        except json.JSONDecodeError:
+                            runningSession.handleError(MODULE_NAME, sessions.ReturnCode.SYNTAX_ERROR, "syntax error in file config/streaming/templateParameters.json")
+
+                            return sessions.ReturnCode.SYNTAX_ERROR
+                    except IOError:
+                        runningSession.handleError(MODULE_NAME, sessions.ReturnCode.FILE_NOT_FOUND, "file at config/streaming/templateParameters.json not found")
+               
+                        return sessions.ReturnCode.FILE_NOT_FOUND
+                else:
+                    runningSession.handleError(MODULE_NAME, sessions.ReturnCode.ARGUMENT_ERROR, "argument `parameterSpecification` not in set \{specifyParameters, useConfigurationTemplate\}")
+            
+                    return sessions.ReturnCode.ARGUMENT_ERROR
+                
+                try:
+                    if len(arguments) > 2:
+                        if len(arguments) > 3:
+                            self.useConfigurationTemplate(configurationTemplateParameters, arguments[3], arguments[4])
+                        else:
+                            self.useConfigurationTemplate(configurationTemplateParameters, arguments[3])
+                    else:
+                        self.useConfigurationTemplate(configurationTemplateParameters)
+                except IOError:
+                    runningSession.handleError(MODULE_NAME, sessions.ReturnCode.FILE_NOT_FOUND, "file not found")
+               
+                    return sessions.ReturnCode.FILE_NOT_FOUND
+            else:
+                runningSession.handleError(MODULE_NAME, sessions.ReturnCode.ARGUMENT_ERROR, "argument `parameterSpecification` not specified")
+
+                return sessions.ReturnCode.ARGUMENT_ERROR
+        else:
+            return sessions.ReturnCode.MODULE_COMMAND_NOT_FOUND
+
+        return sessions.ReturnCode.OK

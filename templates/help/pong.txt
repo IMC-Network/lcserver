@@ -7,6 +7,6 @@ Usage: `pong`
 -----
 
 `pong` is primarily used to see if the shell is responding, especially when
-using remote connections. `pong` has been included with `ping` for good measure,
-and for when you're bored ─ but be careful not to get stuck in an infinite loop
-when replying to the shell!
+using remote connections. `pong` has been included with :`ping`: for good
+measure, and for when you're bored ─ but be careful not to get stuck in an
+infinite loop when replying to the shell!

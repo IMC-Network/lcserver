@@ -1,0 +1,8 @@
+IMC LiveCloud Server Streamer Nginx Configuration Copier Command
+
+Copies the configuration for `nginx` to the `nginx` configuration path.
+
+Usage: `$ useConfiguration [<newConfigurationPath>]`
+
+<newConfigurationPath>
+            Location of configuration file to copy from.

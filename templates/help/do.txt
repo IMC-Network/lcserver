@@ -1,0 +1,13 @@
+IMC LiveCloud Server Module Instance Controller Command
+
+Controls existing instances of modules and allows for commands to be passed to
+said instances.
+
+Usage: `do <index> <command[0]> [<command[1 ...]> ...]`
+
+<index>     Index of the module instance to control.
+<command>   Command arguments to pass to module instance.
+
+-----
+
+To run commands associated with a module instance, use the :`do`: command.

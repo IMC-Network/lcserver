@@ -1,0 +1,5 @@
+IMC LiveCloud Server Streamer Start Command
+
+Starts the streaming server if it is not already running.
+
+Usage: `$ start`

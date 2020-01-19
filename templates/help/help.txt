@@ -2,9 +2,9 @@ IMC LiveCloud Server Help
 
 Gets help to do with this shell or a specific command.
 
-Usage: `help [command]`
+Usage: `help [<command>]`
 
-command     Command to get help with.
+<command>   Command to get help with.
 
 -----
 
@@ -18,4 +18,20 @@ List of available internal commands:
 exit        Exits this shell.
 help        Gets help to do with this shell or a specific command.
 ping        Returns "Pong!".
-Pong        Returns "Ping!".
+pong        Returns "Ping!".
+
+List of available module commands:
+
+Streamer.start
+            Starts the streaming server if it is not already running.
+Streamer.stop
+            Stops the streaming server if it is not already stopped.
+Streamer.testConfiguration
+            Invokes `nginx` to test to see if the configuration file at the
+            `nginx` configuration path is correctly formatted.
+Streamer.useConfiguration
+            Copies the configuration for `nginx` to the `nginx` configuration
+            path.
+Streamer.useConfigurationTemplate
+            Copies the configuration for `nginx` to the `nginx` configuration
+            path using a specified template.

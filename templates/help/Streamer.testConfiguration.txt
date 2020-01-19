@@ -1,0 +1,6 @@
+IMC LiveCloud Server Streamer Nginx Configuration Tester Command
+
+Invokes `nginx` to test to see if the configuration file at the `nginx`
+configuration path is correctly formatted.
+
+Usage: `$ testConfiguration`
