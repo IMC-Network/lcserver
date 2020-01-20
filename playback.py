@@ -16,11 +16,17 @@ class Player(modules.Module):
 
         self.currentMRL = None
         self.playing = False
+        self.cueHandled = False
 
         self.vlcEvents.event_attach(vlc.EventType.MediaPlayerEndReached, self._onMediaEndReached)
 
     def cueMRL(self, mrl):
         self.currentMRL = mrl
+
+        if not self.cueHandled:
+            self.vlcPlayer.set_mrl(self.currentMRL)
+
+            self.cueHandled = True
 
     def cueFile(self, path):
         if os.path.isfile(self.sourceRoot + "/" + path):
@@ -30,10 +36,13 @@ class Player(modules.Module):
     
     def play(self):
         if self.currentMRL != None:
-            self.vlcPlayer.set_mrl(self.currentMRL)
+            if not self.cueHandled:
+                self.vlcPlayer.set_mrl(self.currentMRL)
+            
             self.vlcPlayer.play()
 
             self.playing = True
+            self.cueHandled = False
         else:
             raise TypeError("no media cued")
     
