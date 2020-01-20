@@ -12,13 +12,14 @@ class Player(modules.Module):
 
         self.vlcInstance = vlc.Instance("--quiet")
         self.vlcPlayer = self.vlcInstance.media_player_new()
+        self.vlcEvents = self.vlcPlayer.event_manager()
 
         self.currentMRL = None
         self.playing = False
 
-    def cueMRL(self, mrl):
-        self.vlcPlayer.set_mrl(mrl)
+        self.vlcEvents.event_attach(vlc.EventType.MediaPlayerEndReached, self._onMediaEndReached)
 
+    def cueMRL(self, mrl):
         self.currentMRL = mrl
 
     def cueFile(self, path):
@@ -29,15 +30,19 @@ class Player(modules.Module):
     
     def play(self):
         if self.currentMRL != None:
+            self.vlcPlayer.set_mrl(self.currentMRL)
             self.vlcPlayer.play()
 
             self.playing = True
         else:
-            raise TypeError("no file cued")
+            raise TypeError("no media cued")
     
     def stop(self):
         self.vlcPlayer.stop()
 
+        self.playing = False
+    
+    def _onMediaEndReached(self):
         self.playing = False
     
     def _runCommand(self, arguments, runningSession):
@@ -64,7 +69,7 @@ class Player(modules.Module):
             try:
                 self.play()
             except TypeError:
-                runningSession.handleError(type(self).__name__, sessions.ReturnCode.ERROR, "no file cued")
+                runningSession.handleError(type(self).__name__, sessions.ReturnCode.ERROR, "no media cued")
 
                 return sessions.ReturnCode.ERROR
         elif arguments[0] == "stop":
