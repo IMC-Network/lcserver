@@ -1,5 +1,5 @@
 import sessions
-import logging
+import ioLogging
 
 import iohandlers.default
 import iohandlers.ttyio

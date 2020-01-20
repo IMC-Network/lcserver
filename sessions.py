@@ -1,5 +1,5 @@
-import inputting
-import logging
+import ioInputting
+import ioLogging
 import streaming
 
 import iohandlers.default
@@ -20,9 +20,9 @@ class ReturnCode(Enum):
     MODULE_COMMAND_NOT_FOUND = 8
 
 class Session:
-    def __init__(self, inputHandlers = [logging.iohandlers.default.defaultHandler.handleInput], printHandlers = [logging.iohandlers.default.defaultHandler.handlePrint]):
-        self.input = inputting.Input(inputHandlers)
-        self.log = logging.Log(printHandlers)
+    def __init__(self, inputHandlers = [ioLogging.iohandlers.default.defaultHandler.handleInput], printHandlers = [ioLogging.iohandlers.default.defaultHandler.handlePrint]):
+        self.input = ioInputting.Input(inputHandlers)
+        self.log = ioLogging.Log(printHandlers)
         self.moduleInstances = {}
     
     def handleError(self, module, returnCode = ReturnCode.ERROR, message = "<unknown>"):

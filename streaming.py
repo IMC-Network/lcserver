@@ -10,9 +10,10 @@ NGINX_CONFIGURATION_PATH = "/usr/local/nginx/conf/nginx.conf"
 
 class Streamer:
     def __init__(self, input, log):
-        self.configurationPath = NGINX_CONFIGURATION_PATH
         self.input = input
         self.log = log
+        
+        self.configurationPath = NGINX_CONFIGURATION_PATH
         self.isRunning = False
     
     def start(self):

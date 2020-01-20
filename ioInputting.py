@@ -4,7 +4,7 @@ import queue
 
 import iohandlers.default
 
-import logging
+import ioLogging
 
 class Entry:
     def __init__(self, module, prompt, text, application, timestamp):
