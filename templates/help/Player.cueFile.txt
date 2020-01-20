@@ -1,0 +1,11 @@
+IMC LiveCloud Server Playback File Cuer
+
+Cues media found at the local file location ready for playing.
+
+Usage: `$ cueMRL <path>`
+
+<path>      Local file location of the media to use for cueing.
+
+-----
+
+To play the media, use the :`Player.play`: command.

@@ -2,11 +2,22 @@ IMC LiveCloud Server Module Instance Creator Command
 
 Creates new instances of modules.
 
-Usage: `new <module {Streamer}> <index>`
+Usage: `new <module {Streamer, Player}> <index> [<arguments[0 ...]> ...]`
 
 <module>    Name of module to use.
 <index>     Index to give the module instance.
+<arguments> Arguments to pass to module instance initialiser.
 
 -----
 
 To run commands associated with a module instance, use the :`do`: command.
+
+Some modules require extra arguments for initialisation. To pass these
+arguments, you'll need to use the `<arguments>` argument list.
+
+Streamer module usage: `new Streamer <index>`
+
+Player module usage: `new Player <index> <arguments[0] (sourceRoot)>`
+
+<arguments[0] (sourceRoot)>
+            Root directory where playable files are stored.

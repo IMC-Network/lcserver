@@ -1,0 +1,5 @@
+IMC LiveCloud Server Player Play Command
+
+Stops the currently playing media.
+
+Usage: `$ stop`

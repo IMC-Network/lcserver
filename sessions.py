@@ -1,12 +1,11 @@
 import ioInputting
 import ioLogging
 import streaming
+import playback
 
 import iohandlers.default
 
 from enum import Enum
-
-MODULE_NAME = "session"
 
 class ReturnCode(Enum):
     ERROR = 0
@@ -40,40 +39,45 @@ class Session:
             try:
                 helpFile = open("templates/help/{0}.txt".format(helpTopic), "r")
                 
-                self.log.print(MODULE_NAME, helpFile.read())
+                self.log.print(type(self).__name__, helpFile.read())
                 helpFile.close()
             except FileNotFoundError:
-                self.handleError(MODULE_NAME, ReturnCode.FILE_NOT_FOUND, "help file on topic `{0}` not found".format(helpTopic))
+                self.handleError(type(self).__name__, ReturnCode.FILE_NOT_FOUND, "help file on topic `{0}` not found".format(helpTopic))
 
                 return ReturnCode.FILE_NOT_FOUND
         elif arguments[0] == "new":
             if len(arguments) > 2:
                 if arguments[1] == "Streamer":
                     self.moduleInstances[arguments[2]] = streaming.Streamer(self.input, self.log)
+                elif arguments[1] == "Player":
+                    if len(arguments) > 3:
+                        self.moduleInstances[arguments[2]] = playback.Player(self.input, self.log, arguments[3])
+                    else:
+                        self.handleError(type(self).__name__, ReturnCode.ARGUMENT_ERROR, "argument `<arguments[0] (sourceRoot)>` not specified")
                 else:
-                    self.handleError(MODULE_NAME, ReturnCode.ARGUMENT_ERROR, "argument `module` not in set \{Streamer\}")
+                    self.handleError(type(self).__name__, ReturnCode.ARGUMENT_ERROR, "argument `<module>` not in set {Streamer, Player}")
 
                     return ReturnCode.ARGUMENT_ERROR
             else:
-                self.handleError(MODULE_NAME, ReturnCode.ARGUMENT_ERROR, "either of arguments `module` and `index` not specified")
+                self.handleError(type(self).__name__, ReturnCode.ARGUMENT_ERROR, "either of arguments `<module>` and `<index>` not specified")
 
                 return ReturnCode.ARGUMENT_ERROR
         elif arguments[0] == "do":
             if len(arguments) > 2:
                 if arguments[1] in self.moduleInstances:
-                    return self.moduleInstances[arguments[1]].runCommand(arguments[2:], self)
+                    return self.moduleInstances[arguments[1]]._runCommand(arguments[2:], self)
                 else:
-                    self.handleError(MODULE_NAME, ReturnCode.INDEX_ERROR, "index {0} not found".format(arguments[1]))
+                    self.handleError(type(self).__name__, ReturnCode.INDEX_ERROR, "index {0} not found".format(arguments[1]))
 
                     return ReturnCode.INDEX_ERROR
             else:
-                self.handleError(MODULE_NAME, ReturnCode.ARGUMENT_ERROR, "either of arguments `index` and `command` not specified")
+                self.handleError(type(self).__name__, ReturnCode.ARGUMENT_ERROR, "either of arguments `<index>` and `<command>` not specified")
 
                 return ReturnCode.ARGUMENT_ERROR
         elif arguments[0] == "ping":
-            self.log.print(MODULE_NAME, "Pong!")
+            self.log.print(type(self).__name__, "Pong!")
         elif arguments[0] == "pong":
-            self.log.print(MODULE_NAME, "Ping!")
+            self.log.print(type(self).__name__, "Ping!")
         else:
             return ReturnCode.COMMAND_NOT_FOUND
         
@@ -81,7 +85,7 @@ class Session:
 
     def start(self):
         while True:
-            command = self.input.input(MODULE_NAME, "$ ").text
+            command = self.input.input(type(self).__name__, "$ ").text
             commandArguments = [""]
 
             inString = False
@@ -117,8 +121,8 @@ class Session:
             elif commandReturn == ReturnCode.OK:
                 pass
             elif commandReturn == ReturnCode.COMMAND_NOT_FOUND:
-                self.handleError(MODULE_NAME, commandReturn, "command not found")
+                self.handleError(type(self).__name__, commandReturn, "command not found")
             elif commandReturn == ReturnCode.MODULE_COMMAND_NOT_FOUND:
-                self.handleError(MODULE_NAME, commandReturn, "module command not found")
+                self.handleError(type(self).__name__, commandReturn, "module command not found")
             elif commandReturn == ReturnCode.EXIT:
                 break

@@ -1,0 +1,9 @@
+IMC LiveCloud Server Player Play Command
+
+Plays media that has been cued.
+
+Usage: `$ play`
+
+-----
+
+To cue the media, use the :`Player.cueMRL`: or :`Player.cueFile`: commands.

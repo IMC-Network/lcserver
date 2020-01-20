@@ -35,3 +35,10 @@ Streamer.useConfiguration
 Streamer.useConfigurationTemplate
             Copies the configuration for `nginx` to the `nginx` configuration
             path using a specified template.
+
+Player.cueMRL
+            Cues media found at the specified MRL location ready for playing.
+Player.cueFile
+            Cues media found at the local file location ready for playing.
+Player.play Plays media that has been cued.
+Player.stop Stops the currently playing media.

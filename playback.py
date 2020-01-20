@@ -1,11 +1,13 @@
+import modules
 import sessions
 
 import vlc
+import os
 
-class Player:
+class Player(modules.Module):
     def __init__(self, input, log, sourceRoot):
-        self.input = input
-        self.log = log
+        super().__init__(input, log)
+
         self.sourceRoot = sourceRoot
 
         self.vlcInstance = vlc.Instance("--quiet")
@@ -19,15 +21,55 @@ class Player:
 
         self.currentMRL = mrl
 
-    def cueFile(self, file):
-        self.cueMRL("file:///" + self.sourceRoot + "/" + file)
+    def cueFile(self, path):
+        if os.path.isfile(self.sourceRoot + "/" + path):
+            self.cueMRL("file:///" + self.sourceRoot + "/" + path)
+        else:
+            raise IOError("file not found")
     
     def play(self):
-        self.vlcPlayer.play()
+        if self.currentMRL != None:
+            self.vlcPlayer.play()
 
-        self.playing = True
+            self.playing = True
+        else:
+            raise TypeError("no file cued")
     
     def stop(self):
         self.vlcPlayer.stop()
 
         self.playing = False
+    
+    def _runCommand(self, arguments, runningSession):
+        if arguments[0] == "cueMRL":
+            if len(arguments) > 1:
+                self.cueMRL(arguments[1])
+            else:
+                runningSession.handleError(type(self).__name__, sessions.ReturnCode.ARGUMENT_ERROR, "argument `<mrl>` not specified")
+
+                return sessions.ReturnCode.ARGUMENT_ERROR
+        elif arguments[0] == "cueFile":
+            if len(arguments) > 1:
+                try:
+                    self.cueFile(arguments[1])
+                except IOError:
+                    runningSession.handleError(type(self).__name__, sessions.ReturnCode.FILE_NOT_FOUND, "file not found")
+            
+                    return sessions.ReturnCode.FILE_NOT_FOUND
+            else:
+                runningSession.handleError(type(self).__name__, sessions.ReturnCode.ARGUMENT_ERROR, "argument `<path>` not specified")
+
+                return sessions.ReturnCode.ARGUMENT_ERROR
+        elif arguments[0] == "play":
+            try:
+                self.play()
+            except TypeError:
+                runningSession.handleError(type(self).__name__, sessions.ReturnCode.ERROR, "no file cued")
+
+                return sessions.ReturnCode.ERROR
+        elif arguments[0] == "stop":
+            self.stop()
+        else:
+            return sessions.ReturnCode.MODULE_COMMAND_NOT_FOUND
+        
+        return sessions.ReturnCode.OK
