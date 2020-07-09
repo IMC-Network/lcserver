@@ -51,7 +51,8 @@ class Player(modules.Module):
 
         self.playing = False
     
-    def _onMediaEndReached(self):
+    @vlc.callbackmethod
+    def _onMediaEndReached(self, event):
         self.playing = False
     
     def _runCommand(self, arguments, runningSession):
