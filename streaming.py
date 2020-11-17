@@ -139,7 +139,7 @@ class Streamer(modules.Module):
                
                         return sessions.ReturnCode.FILE_NOT_FOUND
                 else:
-                    runningSession.handleError(type(self).__name__, sessions.ReturnCode.ARGUMENT_ERROR, "argument `<parameterSpecification>` not in set {specifyParameters, useConfigurationTemplate}")
+                    runningSession.handleError(type(self).__name__, sessions.ReturnCode.ARGUMENT_ERROR, "argument `<parameterSpecification>` not in set {specifyParameters, getParametersFromConfig}")
             
                     return sessions.ReturnCode.ARGUMENT_ERROR
                 
