@@ -1,16 +1,29 @@
 import modules
 import sessions
+import streaming
 
 import vlc
 import os
 
 class Player(modules.Module):
-    def __init__(self, input, log, sourceRoot):
+    def __init__(self, input, log, sourceRoot, streamConnection = None):
         super().__init__(input, log)
 
         self.sourceRoot = sourceRoot
 
-        self.vlcInstance = vlc.Instance("--quiet")
+        if type(streamConnection) is streaming.StreamConnection:
+            self.vlcInstance = vlc.Instance("\
+--quiet --sout=#duplicate{{dst=display,dst=transcode{{vcodec=h264,scale=1,width={},height={},fps={},acodec=mp3,channels=2,samplerate={}:std{{access=rtmp,mux=ffmpeg{{mux=flv}},dst={}}}}}\
+".format(
+                streamConnection.transcodeWidth,
+                streamConnection.transcodeHeight,
+                streamConnection.transcodeFramerate,
+                streamConnection.sampleRate,
+                streamConnection.streamOutput
+            ))
+        else:
+            self.vlcInstance = vlc.Instance("--quiet")
+
         self.vlcPlayer = self.vlcInstance.media_player_new()
         self.vlcEvents = self.vlcPlayer.event_manager()
 
@@ -51,7 +64,6 @@ class Player(modules.Module):
 
         self.playing = False
     
-    @vlc.callbackmethod
     def _onMediaEndReached(self, event):
         self.playing = False
     

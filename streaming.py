@@ -1,11 +1,21 @@
+import tools
 import modules
 import sessions
+import playback
 
 import os
 import json
 
 NGINX_EXECUTABLE = "/usr/local/nginx/sbin/nginx"
 NGINX_CONFIGURATION_PATH = "/usr/local/nginx/conf/nginx.conf"
+
+class StreamConnection():
+    def __init__(self, streamOutput, transcodeWidth, transcodeHeight, transcodeFramerate, sampleRate):
+        self.streamOutput = streamOutput
+        self.transcodeWidth = transcodeWidth
+        self.transcodeHeight = transcodeHeight
+        self.transcodeFramerate = transcodeFramerate
+        self.sampleRate = sampleRate
 
 class Streamer(modules.Module):
     def __init__(self, input, log):
@@ -76,6 +86,14 @@ class Streamer(modules.Module):
 
         self.useConfiguration(finalConfigurationPath)
     
+    def connectNewPlayer(self, sourceRoot, streamOutput, transcodeWidth, transcodeHeight, transcodeFramerate, sampleRate):
+        return playback.Player(
+            self.input,
+            self.log,
+            sourceRoot,
+            StreamConnection(streamOutput, transcodeWidth, transcodeHeight, transcodeFramerate, sampleRate)
+        )
+    
     def _runCommand(self, arguments, runningSession):
         if arguments[0] == "start":
             if not self.isRunning:
@@ -122,7 +140,7 @@ class Streamer(modules.Module):
                             runningSession.handleError(type(self).__name__, sessions.ReturnCode.SYNTAX_ERROR, "syntax error")
                     
                     runningSession.log.print(type(self).__name__, "Key-value dictionary storage set.")
-                elif arguments[1] == "getParamtersFromConfig":
+                elif arguments[1] == "getParametersFromConfig":
                     runningSession.log.print(type(self).__name__, "Getting parameters from config file: config/streaming/templateParameters.json")
 
                     try:
@@ -157,6 +175,35 @@ class Streamer(modules.Module):
                     return sessions.ReturnCode.FILE_NOT_FOUND
             else:
                 runningSession.handleError(type(self).__name__, sessions.ReturnCode.ARGUMENT_ERROR, "argument `<parameterSpecification>` not specified")
+
+                return sessions.ReturnCode.ARGUMENT_ERROR
+        elif arguments[0] == "connectNewPlayer":
+            if len(arguments) > 6:
+                if not tools.assertAll([
+                    arguments[2].startswith("rtmp://"), # streamOutput
+                    tools.isInt(arguments[3]), # transcodeWidth
+                    tools.isInt(arguments[4]), # transcodeHeight
+                    tools.isInt(arguments[5]), # transcodeFramerate
+                    tools.isInt(arguments[6]), # sampleRate
+                    int(arguments[3]) > 0, int(arguments[3]) < 0xFFFF, # transcodeWidth
+                    int(arguments[4]) > 0, int(arguments[4]) < 0xFFFF, # transcodeHeight
+                    int(arguments[5]) > 0, int(arguments[5]) < 0xFFFF, # transcodeFramerate
+                    int(arguments[6]) > 0, int(arguments[6]) < 0xFFFFFFFF # sampleRate
+                ]):
+                    runningSession.handleError(type(self).__name__, sessions.ReturnCode.FAILED_PRECONDITION, "arguments do not satisfy preconditions")
+
+                    return sessions.ReturnCode.FAILED_PRECONDITION
+                
+                runningSession.moduleInstances[arguments[7]] = self.connectNewPlayer(
+                    arguments[1],
+                    arguments[2],
+                    int(arguments[3]),
+                    int(arguments[4]),
+                    int(arguments[5]),
+                    int(arguments[6])
+                )
+            else:
+                runningSession.handleError(type(self).__name__, sessions.ReturnCode.ARGUMENT_ERROR, "arguments `<sourceRoot>`, `<streamOutput>`, `<transcodeWidth>`, `<transcodeHeight>`, `<transcodeFramerate>`, `<sampleRate>` and `<newSessionIndex>` not specified")
 
                 return sessions.ReturnCode.ARGUMENT_ERROR
         else:

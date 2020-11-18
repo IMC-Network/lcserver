@@ -17,6 +17,7 @@ class ReturnCode(Enum):
     ARGUMENT_ERROR = 6
     INDEX_ERROR = 7
     MODULE_COMMAND_NOT_FOUND = 8
+    FAILED_PRECONDITION = 9
 
 class Session:
     def __init__(self, inputHandlers = [ioLogging.iohandlers.default.defaultHandler.handleInput], printHandlers = [ioLogging.iohandlers.default.defaultHandler.handlePrint]):
